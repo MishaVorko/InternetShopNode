@@ -1,0 +1,26 @@
+'use strict';
+const {sequelize, Sequelize} = require('../index');
+
+const Memory = sequelize.define('Memory', {
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    ram: {
+        type: Sequelize.INTEGER
+    },
+    internal_memory: {
+        type: Sequelize.INTEGER
+    },
+    expansion_id: {
+        type: Sequelize.INTEGER,
+        foreignKey: true
+    }
+
+}, {
+    tableName: 'memory',
+    timestamps: false
+});
+
+module.exports = Memory;
