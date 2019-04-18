@@ -1,7 +1,7 @@
 'use strict';
 const {sequelize, Sequelize} = require('../index');
 
-const CommunicationStandarts = sequelize.define('CommunicationStandarts', {
+const ComStandarts = sequelize.define('CommunicationStandarts', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -15,4 +15,4 @@ const CommunicationStandarts = sequelize.define('CommunicationStandarts', {
     timestamps: false
 });
 
-module.exports = CommunicationStandarts;
+module.exports = ComStandarts;

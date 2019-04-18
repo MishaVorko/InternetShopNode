@@ -33,4 +33,10 @@ const Corps = sequelize.define('Corps', {
     timestamps: false
 });
 
+const Protection = require('./CorpsProtectionGoup');
+const Material = require('./CorpsMaterial');
+
+Corps.belongsTo(Protection, {foreignKey: 'protection_id'});
+Corps.belongsTo(Material, {foreignKey: 'material_id'});
+
 module.exports = Corps;

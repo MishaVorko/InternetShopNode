@@ -21,4 +21,17 @@ const ProductToColor = sequelize.define('ProductToColor', {
     timestamps: false
 });
 
+
+const Products = require('./Products');
+const Color = require('./Colors');
+
+Products.belongsToMany(Color, {
+    through: ProductToColor,
+    foreignKey: 'product_id'
+});
+Color.belongsToMany(Products, {
+    through: ProductToColor,
+    foreignKey: 'color_id'
+});
+
 module.exports = ProductToColor;

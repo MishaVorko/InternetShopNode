@@ -21,4 +21,17 @@ const ProductToFrontCamera = sequelize.define('ProductToFrontCamera', {
     timestamps: false
 });
 
+
+const ProductDetails = require('./ProductDetails');
+const FrontCamera = require('./FrontCamera');
+
+ProductDetails.belongsToMany(FrontCamera, {
+    through: ProductToFrontCamera,
+    foreignKey: 'product_details_id'
+});
+FrontCamera.belongsToMany(ProductDetails, {
+    through: ProductToFrontCamera,
+    foreignKey: 'front_camera_id'
+});
+
 module.exports = ProductToFrontCamera;

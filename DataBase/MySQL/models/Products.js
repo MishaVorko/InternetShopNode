@@ -46,12 +46,12 @@ const Products = sequelize.define('Product', {
     tableName: 'products'
 });
 
-const ProductPrice = require('./ProductPrice');
-const ProductDetails = require('./ProductDetails');
-const ProductDescription = require('./ProductDescription');
+const Price = require('./ProductPrice');
+const Details = require('./ProductDetails');
+const Description = require('./ProductDescription');
 
-Products.belongsTo(ProductPrice, {foreignKey: 'price_id'});
-Products.belongsTo(ProductDetails, {foreignKey: 'details_id'});
-Products.belongsTo(ProductDescription, {foreignKey: 'description_id'});
+Products.belongsTo(Price, {foreignKey: 'price_id'});
+Products.belongsTo(Details, {foreignKey: 'details_id'});
+Products.belongsTo(Description, {foreignKey: 'description_id'});
 
 module.exports = Products;

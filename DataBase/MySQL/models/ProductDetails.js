@@ -51,4 +51,25 @@ const ProductDetails = sequelize.define('ProductDetails', {
     timestamps: false
 });
 
+const Screen = require('./ProductScreen');
+const Communication = require('./Communication');
+const Os = require('./Os');
+const Processor = require('./Processors');
+const Memory = require('./Memory');
+const Connectors = require('./ConnectorsGroups');
+const Interfaces = require('./Interfaces');
+const Battery = require('./Battery');
+const Corps = require('./Corps');
+
+ProductDetails.belongsTo(Screen, {foreignKey: 'screen_id'});
+ProductDetails.belongsTo(Communication, {foreignKey: 'communication_id'});
+ProductDetails.belongsTo(Os, {foreignKey: 'os_id'});
+ProductDetails.belongsTo(Processor, {foreignKey: 'processor_id'});
+ProductDetails.belongsTo(Memory, {foreignKey: 'memory_id'});
+ProductDetails.belongsTo(Connectors, {foreignKey: 'connectors_id'});
+ProductDetails.belongsTo(Interfaces, {foreignKey: 'interfaces_id'});
+ProductDetails.belongsTo(Battery, {foreignKey: 'battery_id'});
+ProductDetails.belongsTo(Corps, {foreignKey: 'corps_id'});
+
+
 module.exports = ProductDetails;

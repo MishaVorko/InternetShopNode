@@ -28,4 +28,7 @@ const BackCamera = sequelize.define('BackCamera', {
     timestamps: false
 });
 
+const Resolution = require('./ResolutionVideo');
+BackCamera.belongsTo(Resolution,{foreignKey: 'resolution_id'});
+
 module.exports = BackCamera;

@@ -21,6 +21,8 @@ const ProductsModel = require('./DataBase/MySQL/models/Products');
 const ProductPriceModel = require('./DataBase/MySQL/models/ProductPrice');
 const ProductDetails = require('./DataBase/MySQL/models/ProductDetails');
 const ProductDescriptionModel = require('./DataBase/MySQL/models/ProductDescription');
+const ColorsModel = require('./DataBase/MySQL/models/Colors');
+const RefProdColorModel = require('./DataBase/MySQL/models/Ref-ProductToColor');
 
 
 
@@ -39,14 +41,11 @@ app.use(express.json());
 
 
 app.get('/products', async (req, res, next) => {
-    let data = await ProductsModel.findAll({
-        attributes: [],
+    let data = await ProductsModel.findOne({
+        attributes: ['model'],
         include:[{
-            model: ProductPriceModel,
-            attributes: ['price', 'currency']
-        }, {
-            model: ProductDetails,
-            attributes: ['id', 'os_id']
+            model: ColorsModel,
+            attributes: ['name']
         }]
 
     });

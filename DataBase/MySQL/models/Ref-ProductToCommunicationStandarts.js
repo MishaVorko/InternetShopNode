@@ -21,4 +21,17 @@ const ProductToComStandarts = sequelize.define('ProductToComStandarts', {
     timestamps: false
 });
 
+
+const ProductDetails = require('./ProductDetails');
+const ComStandarts = require('./CommunicationStandarts');
+
+ProductDetails.belongsToMany(ComStandarts, {
+    through: ProductToComStandarts,
+    foreignKey: 'product_details_id'
+});
+ComStandarts.belongsToMany(ProductDetails, {
+    through: ProductToComStandarts,
+    foreignKey: 'communication_standarts_id'
+});
+
 module.exports = ProductToComStandarts;

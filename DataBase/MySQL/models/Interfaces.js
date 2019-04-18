@@ -28,4 +28,8 @@ const Interfaces = sequelize.define('Interfaces', {
     timestamps: false
 });
 
+const WifiType = require('./WifiType');
+
+Interfaces.belongsTo(WifiType, {foreignKey: 'wifi_type_id'});
+
 module.exports = Interfaces;
