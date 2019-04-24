@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+const ControllerError = require('./errors/ControllerError');
 const ProductsRouter = require('./routers/products');
 
 app.use(cors({origin: '*'}));
@@ -13,13 +14,17 @@ app.use(ProductsRouter);
 
 
 app.use((req, res, next) => {
-    res.end('Error\nThis page is not found!')
+    next(new ControllerError('This page is not found!', 404))
+});
+
+app.use((err, req, res, next) => {
+    res.status(err.status).json(err)
 });
 
 app.listen(3000, (err) => {
     if (!err) {
-        console.log("Listen port 3000...");
+        console.log("Listen port 3000...")
     } else {
-        console.log(err);
+        console.log(err)
     }
 });

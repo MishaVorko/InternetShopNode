@@ -50,8 +50,8 @@ const Price = require('./ProductPrice');
 const Details = require('./ProductDetails');
 const Description = require('./ProductDescription');
 
-Products.belongsTo(Price, {foreignKey: 'price_id'});
+Products.belongsTo(Price, {as: 'Price', foreignKey: 'price_id'});
 Products.belongsTo(Details, {as: 'Details', foreignKey: 'details_id'});
-Products.belongsTo(Description, {foreignKey: 'description_id'});
+Products.belongsTo(Description, {as: 'Description', foreignKey: 'description_id'});
 
 module.exports = Products;
