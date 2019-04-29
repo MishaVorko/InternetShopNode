@@ -28,9 +28,7 @@ const Img = sequelize.define('Img', {
 });
 
 const ClientScreen = require('./ClientScreen');
-const ProductDescription = require('./ProductDescription');
 
-Img.belongsTo(ClientScreen, {foreignKey: 'client_screen_id'});
-Img.belongsTo(ProductDescription, {foreignKey: 'product_description_id'});
+Img.belongsTo(ClientScreen, {as: 'ClientScreen', foreignKey: 'client_screen_id'});
 
 module.exports = Img;

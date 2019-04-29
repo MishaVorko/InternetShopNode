@@ -10,7 +10,7 @@ app.use(cors({origin: '*'}));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
-app.use(ProductsRouter);
+app.use('/products', ProductsRouter);
 
 
 app.use((req, res, next) => {
@@ -18,7 +18,9 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    res.status(err.status).json(err)
+    if(!err.status) res.json(err);
+    else res.status(err.status).json(err)
+
 });
 
 app.listen(3000, (err) => {

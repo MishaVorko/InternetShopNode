@@ -23,13 +23,13 @@ const ProductToColor = sequelize.define('ProductToColor', {
 
 
 const Products = require('./Products');
-const Color = require('./Colors');
+const Colors = require('./Colors');
 
-Products.belongsToMany(Color, {
+Products.belongsToMany(Colors, {
     through: ProductToColor,
     foreignKey: 'product_id'
 });
-Color.belongsToMany(Products, {
+Colors.belongsToMany(Products, {
     through: ProductToColor,
     foreignKey: 'color_id'
 });

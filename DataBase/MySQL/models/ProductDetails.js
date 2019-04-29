@@ -61,7 +61,7 @@ const Interfaces = require('./Interfaces');
 const Battery = require('./Battery');
 const Corps = require('./Corps');
 
-ProductDetails.belongsTo(Screen, {foreignKey: 'screen_id'});
+ProductDetails.belongsTo(Screen, {as: 'Screen', foreignKey: 'screen_id'});
 ProductDetails.belongsTo(Communication, {foreignKey: 'communication_id'});
 ProductDetails.belongsTo(Os, {foreignKey: 'os_id'});
 ProductDetails.belongsTo(Processor, {foreignKey: 'processor_id'});

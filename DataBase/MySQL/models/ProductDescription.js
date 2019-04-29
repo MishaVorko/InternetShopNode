@@ -19,4 +19,7 @@ const ProductDescription = sequelize.define('ProductDescription', {
     timestamps: false
 });
 
+const Img = require('./Img');
+ProductDescription.hasMany(Img,{as: 'Images',foreignKey: 'product_description_id'});
+
 module.exports = ProductDescription;
