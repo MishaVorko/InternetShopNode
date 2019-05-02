@@ -26,10 +26,12 @@ const Products = require('./Products');
 const Colors = require('./Colors');
 
 Products.belongsToMany(Colors, {
+    as: 'Colors',
     through: ProductToColor,
     foreignKey: 'product_id'
 });
 Colors.belongsToMany(Products, {
+    as: 'Products',
     through: ProductToColor,
     foreignKey: 'color_id'
 });

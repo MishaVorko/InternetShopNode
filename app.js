@@ -19,7 +19,10 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
     if(!err.status) res.json(err);
-    else res.status(err.status).json(err)
+    else res.status(err.status).json({
+        success: false,
+        error: err
+    })
 
 });
 
