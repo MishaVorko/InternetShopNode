@@ -31,7 +31,7 @@ const ProductScreen = sequelize.define('ProductScreen', {
 const Resolution = require('./ResolutionVideo');
 const Type = require('./ProductScreenType');
 
-ProductScreen.belongsTo(Resolution, {foreignKey: 'resolution_id'});
-ProductScreen.belongsTo(Type, {foreignKey: 'type_id'});
+ProductScreen.belongsTo(Resolution, {as: 'Resolution', foreignKey: 'resolution_id'});
+ProductScreen.belongsTo(Type, {as: 'ScreenType', foreignKey: 'type_id'});
 
 module.exports = ProductScreen;

@@ -29,52 +29,57 @@ module.exports = async (req, res, next) => {
 
 
         let data = await ProductsModel.findAll({
-            attributes: ['brand', 'model', 'type', 'description_id', 'price_id'],
-            include: [{
-                association: 'Price',
-                attributes: ['price', 'currency', 'discount'],
-                where: {
-                    price: {
-                        [Op.between]: [priceMin, priceMax]
-                    }
-                }
-            }, {
-                association: 'Description',
-                attributes: ['short_description'],
-                include: [{
-                    association: 'Images',
-                    attributes: ['place']
-                }]
-            }, {
-                    association: 'Colors',
-                    through: {
-                        model: RefProductColorModel,
+                attributes: ['brand', 'model', 'type', 'description_id', 'price_id'],
+                include: [
+                    {
+                        association: 'Price',
+                        attributes: ['price', 'currency', 'discount'],
+                        where: {
+                            price: {
+                                [Op.between]: [priceMin, priceMax]
+                            }
+                        }
+                    }, {
+                        association: 'Description',
+                        attributes: ['short_description'],
+                        include: [
+                            {
+                                association: 'Images',
+                                attributes: ['place']
+                            }
+                        ]
+                    }, {
+                        association: 'Colors',
+                        through: {
+                            model: RefProductColorModel,
+                            attributes: [],
+                        },
                         attributes: [],
-                    },
-                    attributes: [],
-                    where: {
-                        name: {
-                            [Op.like]: `%${color}%`
+                        where: {
+                            name: {
+                                [Op.like]: `%${color}%`
+                            }
                         }
                     }
-                }
-            ],
-            where: {
-                [Op.or]: [{
-                    brand: {
-                        [Op.like]: `%${searchStr}%`
-                    }
-                }, {
-                    model: {
-                        [Op.like]: `%${searchStr}%`
-                    }
-                }]
-            },
-            offset: (+req.params.page - 1) * +req.params.limit,
-            limit: +req.params.limit
-        });
+                ],
+                where: {
+                    [Op.or]: [{
+                        brand: {
+                            [Op.like]: `%${searchStr}%`
+                        }
+                    }, {
+                        model: {
+                            [Op.like]: `%${searchStr}%`
+                        }
+                    }]
+                },
+                offset: (+req.params.page - 1) * +req.params.limit,
+                limit: +req.params.limit
+            }
+        );
 
         if (!data) throw new ControllerError('Can`t give products', 500);
+
         res.json({
             success: true,
             data

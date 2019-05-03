@@ -25,6 +25,6 @@ const Memory = sequelize.define('Memory', {
 
 const Expansion = require('./MemoryExpansion');
 
-Memory.belongsTo(Expansion, {foreignKey: 'expansion_id'});
+Memory.belongsTo(Expansion, {as: 'MemoryExpansion', foreignKey: 'expansion_id'});
 
 module.exports = Memory;

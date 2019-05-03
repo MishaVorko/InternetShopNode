@@ -26,6 +26,7 @@ const BackCamera = require('./BackCamera');
 const ProductDetails = require('./ProductDetails');
 
 ProductDetails.belongsToMany(BackCamera, {
+    as: 'BackCamera',
     through: ProductToBackCamera,
     foreignKey: 'product_details_id'
 });

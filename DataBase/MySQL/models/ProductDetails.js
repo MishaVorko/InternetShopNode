@@ -62,14 +62,14 @@ const Battery = require('./Battery');
 const Corps = require('./Corps');
 
 ProductDetails.belongsTo(Screen, {as: 'Screen', foreignKey: 'screen_id'});
-ProductDetails.belongsTo(Communication, {foreignKey: 'communication_id'});
-ProductDetails.belongsTo(Os, {foreignKey: 'os_id'});
-ProductDetails.belongsTo(Processor, {foreignKey: 'processor_id'});
-ProductDetails.belongsTo(Memory, {foreignKey: 'memory_id'});
-ProductDetails.belongsTo(Connectors, {foreignKey: 'connectors_id'});
-ProductDetails.belongsTo(Interfaces, {foreignKey: 'interfaces_id'});
-ProductDetails.belongsTo(Battery, {foreignKey: 'battery_id'});
-ProductDetails.belongsTo(Corps, {foreignKey: 'corps_id'});
+ProductDetails.belongsTo(Communication, {as: 'Communication', foreignKey: 'communication_id'});
+ProductDetails.belongsTo(Os, {as: 'Os', foreignKey: 'os_id'});
+ProductDetails.belongsTo(Processor, {as: 'Processor', foreignKey: 'processor_id'});
+ProductDetails.belongsTo(Memory, {as: 'Memory', foreignKey: 'memory_id'});
+ProductDetails.belongsTo(Connectors, {as: 'ConnectorsGroup', foreignKey: 'connectors_id'});
+ProductDetails.belongsTo(Interfaces, {as: 'Interfaces', foreignKey: 'interfaces_id'});
+ProductDetails.belongsTo(Battery, {as: 'Battery', foreignKey: 'battery_id'});
+ProductDetails.belongsTo(Corps, {as: 'Corps', foreignKey: 'corps_id'});
 
 
 module.exports = ProductDetails;

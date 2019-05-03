@@ -26,6 +26,7 @@ const ProductDetails = require('./ProductDetails');
 const ComStandarts = require('./CommunicationStandarts');
 
 ProductDetails.belongsToMany(ComStandarts, {
+    as: 'CommStandarts',
     through: ProductToComStandarts,
     foreignKey: 'product_details_id'
 });

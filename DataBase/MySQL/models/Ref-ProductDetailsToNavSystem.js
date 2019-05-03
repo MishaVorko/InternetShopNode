@@ -29,6 +29,7 @@ NavSystem.belongsToMany(ProductDetails, {
     foreignKey: 'nav_system_id'
 });
 ProductDetails.belongsToMany(NavSystem, {
+    as: 'NavigateSystem',
     through: ProductDetailsToNavSystem,
     foreignKey: 'products_details_id'
 });

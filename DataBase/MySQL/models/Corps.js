@@ -36,7 +36,7 @@ const Corps = sequelize.define('Corps', {
 const Protection = require('./CorpsProtectionGoup');
 const Material = require('./CorpsMaterial');
 
-Corps.belongsTo(Protection, {foreignKey: 'protection_id'});
-Corps.belongsTo(Material, {foreignKey: 'material_id'});
+Corps.belongsTo(Protection, {as: 'CorpsProtection', foreignKey: 'protection_id'});
+Corps.belongsTo(Material, {as: 'CorpsMaterial', foreignKey: 'material_id'});
 
 module.exports = Corps;
