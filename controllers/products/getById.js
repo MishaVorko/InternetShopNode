@@ -135,7 +135,7 @@ module.exports = async (req, res, next) => {
             ]
         });
 
-        if (!data) throw new ControllerError('Can`t give product', 500);
+        if (!data) throw new ControllerError('Server error. Can`t give product', 500);
         res.json({
             success: true,
             data
