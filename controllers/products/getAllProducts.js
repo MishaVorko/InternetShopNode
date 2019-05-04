@@ -1,14 +1,16 @@
 const ControllerError = require('../../errors/ControllerError');
-const Sequelize = require('sequelize');
-const Op = Sequelize.Op;
-
-//******Require database models******
-const ProductsModel = require('../../DataBase/MySQL/models/Products');
-const RefProductColorModel = require('../../DataBase/MySQL/models/Ref-ProductToColor');
+const Op = require('sequelize').Op;
+const MySqlDatabase = require('../../dataBase/MySQL').getInstance();
 
 
 module.exports = async (req, res, next) => {
     try {
+
+        //******Require database models******
+        const ProductsModel = MySqlDatabase.getModel('Products');
+        const RefProductColors = MySqlDatabase.getModel('Ref-ProductToColor');
+
+
         let page = +req.params.page;
         let searchStr = req.params.search_string;
         let color = req.params.color;
@@ -50,17 +52,23 @@ module.exports = async (req, res, next) => {
                         }
                     ]
                 }, {
-                    association: 'Colors',
-                    through: {
-                        model: RefProductColorModel,
-                        attributes: [],
-                    },
-                    attributes: [],
-                    where: {
-                        name: {
-                            [Op.like]: `%${color}%`
+                    association: 'Details',
+                    attributes: ['id'],
+                    include: [
+                        {
+                            association: 'Colors',
+                            through: {
+                                model: RefProductColors,
+                                attributes: [],
+                            },
+                            attributes: ['name'],
+                            where: {
+                                name: {
+                                    [Op.like]: `%${color}%`
+                                }
+                            }
                         }
-                    }
+                    ]
                 }
             ],
             where: {
@@ -76,7 +84,7 @@ module.exports = async (req, res, next) => {
             },
             offset: (+req.params.page - 1) * +req.params.limit,
             limit: +req.params.limit,
-            group: 'product.id'
+            group: 'products.id'
         });
 
         if (!data) throw new ControllerError('Server error. Can`t give products', 500);

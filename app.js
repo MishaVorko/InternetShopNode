@@ -1,9 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const MySQLDatabase = require('./dataBase/MySQL/index').getInstance();
+
+MySQLDatabase.setModels();
 
 const ControllerError = require('./errors/ControllerError');
 const ProductsRouter = require('./routers/products');
+
 
 app.use(cors({origin: '*'}));
 

@@ -1,18 +1,20 @@
 const ControllerError = require('../../errors/ControllerError');
-
-//******Require database models******
-const ProductsModel = require('../../DataBase/MySQL/models/Products');
-const RefProductColorModel = require('../../DataBase/MySQL/models/Ref-ProductToColor');
-const RefProdDetailsNavSystem = require('../../DataBase/MySQL/models/Ref-ProductDetailsToNavSystem');
-const RefProdDetailsBackCamera = require('../../DataBase/MySQL/models/Ref-ProductToBackCamera');
-const RefProdDetailsFrontCamera = require('../../DataBase/MySQL/models/Ref-ProductToFrontCamera');
-const RefProdDetailsCommunication = require('../../DataBase/MySQL/models/Ref-ProductToCommunicationStandarts');
+const MySqlDatabase = require('../../dataBase/MySQL/index').getInstance();
 
 
 module.exports = async (req, res, next) => {
     try {
+        //******Require database models******
+        const RefProductColors = MySqlDatabase.getModel('Ref-ProductToColor');
+        const ProductsModel = MySqlDatabase.getModel('Products');
+        const RefProdDetailsNavSystem = MySqlDatabase.getModel('Ref-ProductDetailsToNavSystem');
+        const RefProdDetailsBackCamera = MySqlDatabase.getModel('Ref-ProductToBackCamera');
+        const RefProdDetailsCommunication = MySqlDatabase.getModel('Ref-ProductToCommunicationStandarts');
+        const RefProdDetailsFrontCamera = MySqlDatabase.getModel('Ref-ProductToFrontCamera');
 
         if (!req.params.id) throw new ControllerError('Bad request. Bad products id', 400);
+        if (!RefProductColors) throw new ControllerError('Bad', 400);
+
 
         let data = await ProductsModel.findOne({
             attributes: ['id', 'brand', 'model', 'type', 'price_id',
@@ -24,7 +26,8 @@ module.exports = async (req, res, next) => {
                 {
                     association: 'Price',
                     attributes: ['price', 'currency', 'discount']
-                }, {
+                },
+                {
                     association: 'Description',
                     attributes: ['short_description'],
                     include: [
@@ -122,15 +125,15 @@ module.exports = async (req, res, next) => {
                                 attributes: []
                             },
                             attributes: ['quantity', 'pixels', 'flash']
+                        }, {
+                            association: 'Colors',
+                            through: {
+                                model: RefProductColors,
+                                attributes: []
+                            },
+                            attributes: ['name']
                         }
                     ]
-                }, {
-                    association: 'Colors',
-                    through: {
-                        model: RefProductColorModel,
-                        attributes: [],
-                    },
-                    attributes: ['name'],
                 }
             ]
         });
