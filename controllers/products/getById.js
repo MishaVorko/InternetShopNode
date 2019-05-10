@@ -1,7 +1,6 @@
 const ControllerError = require('../../errors/ControllerError');
 const MySqlDatabase = require('../../dataBase/MySQL/index').getInstance();
 
-
 module.exports = async (req, res, next) => {
     try {
         //******Require database models******
@@ -14,7 +13,6 @@ module.exports = async (req, res, next) => {
 
         if (!req.params.id) throw new ControllerError('Bad request. Bad products id', 400);
         if (!RefProductColors) throw new ControllerError('Bad', 400);
-
 
         let data = await ProductsModel.findOne({
             attributes: ['id', 'brand', 'model', 'type', 'price_id',

@@ -2,107 +2,91 @@ const ControllerError = require('../../errors/ControllerError');
 const MySqlDatabase = require('../../dataBase/MySQL').getInstance();
 
 
-module.exports = async (req, res, next) => {
-    try {
-        //******Require database models******
-        const DetailsModel = MySqlDatabase.getModel('ProductDetails');
-        const ProductsModel = MySqlDatabase.getModel('Products');
-        const RefProdDetailsNavSystem = MySqlDatabase.getModel('Ref-ProductDetailsToNavSystem');
-        const RefProdDetailsBackCamera = MySqlDatabase.getModel('Ref-ProductToBackCamera');
-        const RefProdDetailsCommunication = MySqlDatabase.getModel('Ref-ProductToCommunicationStandarts');
-        const RefProdDetailsFrontCamera = MySqlDatabase.getModel('Ref-ProductToFrontCamera');
+// Data for product must named - NewProduct, data for other table must named - OtherTableData
+// Objects NewProduct and OtherTableData consist of objects that describe the table and named like SQL table name
+// Objects that describe tables should have fields that match the fields of the desired SQL table
 
+//this function accepts objects: NewProduct or OtherTableData and returns the table data if it succeeds
+async function createRow(ProductData){
+    let tempolarData = {};
+    let data = {};
 
-        if (!req.body) throw new ControllerError('Bad request. Bad req data', 400);
+    for(key in ProductData){
+        let rowData = ProductData[`${key}`];
+        const Model = MySqlDatabase.getModel(`${key}`);
 
-        let statusMessages = {};
-        let data;
-        let temporalData = {};
+        if(key === 'Products'){
+            let checkedColumn = {};
 
-        /*
-        * Price
-        * Images
-        * Screen
-        * - Resolution
-        * - ScreenType
-        * Communication
-        * Os
-        * Processor
-        * Memory
-        * - MemoryExpansion
-        * ConnectorsGroup
-        * Interfaces
-        * Battery
-        * Corps
-        * - CorpsProtection
-        * - CorpsMaterial
-        *
-        * RefProdDetailsNavSystem + NavSystem
-        * RefProdDetailsBackCamera + BackCamera
-        * RefProdDetailsCommunication + CommStandarts
-        * RefProdDetailsFrontCamera + FrontCamera
-        *
-        *
-        * RefProductColorModel + Color
-        *  */
+            if(!tempolarData.detailsId) throw new ControllerError('Bad request. Undefined ProductDetails', 400);
+            rowData.details_id = tempolarData.detailsId;
 
-
-        //*****Create Product*****
-        if (req.body.Created === 'product') {
-            if (!req.body.brand || !req.body.model) throw new ControllerError('Bad request. Bad req data for create product', 500);
-
-            await DetailsModel.findOrCreate({
-                where: {
-                    screen_id: req.body.screen_id,
-                    communication_id: req.body.communication_id,
-                    os_id: req.body.os_id,
-                    processor_id: req.body.processor_id,
-                    memory_id: req.body.memory_id,
-                    connectors_id: req.body.connectors_id,
-                    interfaces_id: req.body.interfaces_id,
-                    battery_id: req.body.battery_id,
-                    corps_id: req.body.corps_id,
-                    additional_features: req.body.additional_features
+            for(column in rowData){
+                if(column === 'brand' || column === 'model' || column === 'price_id'){
+                    checkedColumn[`${column}`] = rowData[`${column}`];
+                    delete rowData[`${column}`]
                 }
-            }).then( data => {
-                temporalData.detailsId = data[0].dataValues.id;
+            }
+
+            data[`${key}`] = await Model.findOrCreate({
+                where: checkedColumn,
+                defaults: rowData
+
             });
 
-            if (!temporalData.detailsId) throw new ControllerError('Create details error', 500);
-
-
-            data = await ProductsModel.findOrCreate({
-                where: {
-                    brand: req.body.brand,
-                    model: req.body.model,
-                    price_id: req.body.price_id,
-                    country: req.body.country,
-                    warranty_period: req.body.warranty_period,
-                    equipment: req.body.equipment,
-                    details_id: temporalData.detailsId,
-                    description_id: req.body.description_id
-                },
-                defaults: {
-                    type: 'smartphone'
-                }
-            });
-
-            if (!data) throw new ControllerError('Product create error', 500);
-            else  statusMessages.product = 'Product is create';
+            if(!data[`${key}`]) throw new ControllerError(`False creating ${key}`, 500);
         }
 
-        //***ColorsRef
-        // await RefProductColorModel.create({
-        //     color_id: req.body.color_id,
-        //     product_id: req.body.color_id
-        // }, {}).then(data => {
-        //     console.log(data);
-        // });
+        if(key === 'ProductDetails'){
+            await Model.findOrCreate({
+                where: rowData
 
-        //*****End Create Product*****
+            }).then(data => {
+                tempolarData.detailsId = data[0].dataValues.id;
+                data.ProductDetails = data[0].dataValues;
+            }).catch(err => {
+                data.error = err.message;
+                console.log(err);
+            });
+            //
+            // if(data.error) throw new ControllerError(data.error, 500);
+
+        } else {
+            data[`${key}`] = await Model.findOrCreate({
+                where: rowData
+            });
+
+            if(!data[`${key}`]) throw new ControllerError(`False creating ${key}`, 500);
+        }
+
+    }
+    return data
+}
+
+module.exports = async (req, res, next) => {
+    try {
+
+        let statusMessages;
+        let data = {};
 
 
-        if (!data) throw new ControllerError('Server error', 500);
+        if(!req.body.Created || !req.body) throw new ControllerError('Bad request. Bad req body', 400);
+
+        for(key in req.body){
+            if(key === 'NewProduct'){
+                let productData = req.body[`${key}`];
+                data[`${key}`] = createRow(productData);
+
+            }
+            if(key !== 'Created' && key !== 'NewProduct' && key !== 'OtherData'){
+                let tebleData = req.body[`${key}`];
+                data[`${key}`] = createRow(tebleData);
+            }
+        }
+
+
+        if (data.errors) throw new ControllerError('Server error', 500);
+        else statusMessages = 'All Created';
 
         res.json({
             success: true,
@@ -114,3 +98,41 @@ module.exports = async (req, res, next) => {
         next(err);
     }
 };
+
+
+// //******Require database models******
+// const DetailsModel = MySqlDatabase.getModel('ProductDetails');
+// const ProductsModel = MySqlDatabase.getModel('Products');
+// const RefProdDetailsNavSystem = MySqlDatabase.getModel('Ref-ProductDetailsToNavSystem');
+// const RefProdDetailsBackCamera = MySqlDatabase.getModel('Ref-ProductToBackCamera');
+// const RefProdDetailsCommunication = MySqlDatabase.getModel('Ref-ProductToCommunicationStandarts');
+// const RefProdDetailsFrontCamera = MySqlDatabase.getModel('Ref-ProductToFrontCamera');
+// const RefProductToColor = MySqlDatabase.getModel('Ref-ProductToColor');
+
+//
+// /*
+// * Price
+// * Images
+// * Screen
+// * - Resolution
+// * - ScreenType
+// * Communication
+// * Os
+// * Processor
+// * Memory
+// * - MemoryExpansion
+// * ConnectorsGroup
+// * Interfaces
+// * Battery
+// * Corps
+// * - CorpsProtection
+// * - CorpsMaterial
+// *
+// * RefProdDetailsNavSystem + NavSystem
+// * RefProdDetailsBackCamera + BackCamera
+// * RefProdDetailsCommunication + CommStandarts
+// * RefProdDetailsFrontCamera + FrontCamera
+// *
+// *
+// * RefProductColorModel + Color
+// *  */
