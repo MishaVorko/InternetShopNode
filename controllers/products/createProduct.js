@@ -28,44 +28,48 @@ async function createRow(ProductData){
                 }
             }
 
-            data[`${key}`] = await Model.findOrCreate({
+            tempolarData[`${key}`] = await Model.findOrCreate({
                 where: checkedColumn,
                 defaults: rowData
+             });
 
-            });
+            data[`${key}`] = tempolarData[`${key}`][0].dataValues;
 
             if(!data[`${key}`]) throw new ControllerError(`False creating ${key}`, 500);
         }
 
         if(key === 'ProductDetails'){
-            await Model.findOrCreate({
-                where: rowData
-
-            }).then(data => {
-                tempolarData.detailsId = data[0].dataValues.id;
-                data.ProductDetails = data[0].dataValues;
+            await Model.create(rowData, {}).then(datas => {
+                tempolarData.detailsId = datas.dataValues.id;
+                data.ProductDetails = datas.dataValues;
             }).catch(err => {
                 data.error = err.message;
                 console.log(err);
             });
-            //
-            // if(data.error) throw new ControllerError(data.error, 500);
+
+            if(data.error) throw new ControllerError(data.error, 500);
 
         } else {
             data[`${key}`] = await Model.findOrCreate({
                 where: rowData
             });
 
+            data[`${key}`] = tempolarData[`${key}`][0].dataValues;
             if(!data[`${key}`]) throw new ControllerError(`False creating ${key}`, 500);
+        }
+
+
+        if(/Ref-[a-zA-Z]/.test(key)){
+        //    Create rows with tempolarData.detailsId
         }
 
     }
     return data
 }
 
+
 module.exports = async (req, res, next) => {
     try {
-
         let statusMessages;
         let data = {};
 
@@ -75,12 +79,16 @@ module.exports = async (req, res, next) => {
         for(key in req.body){
             if(key === 'NewProduct'){
                 let productData = req.body[`${key}`];
-                data[`${key}`] = createRow(productData);
-
+                await createRow(productData).then(datas => {
+                        data.NewProduct = datas;
+                    }
+                );
             }
-            if(key !== 'Created' && key !== 'NewProduct' && key !== 'OtherData'){
+            if(key === 'OtherTables'){
                 let tebleData = req.body[`${key}`];
-                data[`${key}`] = createRow(tebleData);
+                await createRow(tebleData).then(datas => {
+                    data.OtherTables = datas
+                });
             }
         }
 
@@ -108,31 +116,3 @@ module.exports = async (req, res, next) => {
 // const RefProdDetailsCommunication = MySqlDatabase.getModel('Ref-ProductToCommunicationStandarts');
 // const RefProdDetailsFrontCamera = MySqlDatabase.getModel('Ref-ProductToFrontCamera');
 // const RefProductToColor = MySqlDatabase.getModel('Ref-ProductToColor');
-
-//
-// /*
-// * Price
-// * Images
-// * Screen
-// * - Resolution
-// * - ScreenType
-// * Communication
-// * Os
-// * Processor
-// * Memory
-// * - MemoryExpansion
-// * ConnectorsGroup
-// * Interfaces
-// * Battery
-// * Corps
-// * - CorpsProtection
-// * - CorpsMaterial
-// *
-// * RefProdDetailsNavSystem + NavSystem
-// * RefProdDetailsBackCamera + BackCamera
-// * RefProdDetailsCommunication + CommStandarts
-// * RefProdDetailsFrontCamera + FrontCamera
-// *
-// *
-// * RefProductColorModel + Color
-// *  */
